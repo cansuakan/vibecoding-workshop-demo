@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Are You Feeling? — Feelings Vocabulary Activity (A2)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Fredoka+One&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f5f0eb; display: flex; justify-content: center; padding: 20px; min-height: 100vh; }
+  #app { font-family: 'Nunito', sans-serif; min-height: 600px; background: #FFF8F0; color: #3a2f2f; width: 100%; max-width: 540px; border-radius: 18px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.10); }
+  .header { background: #FF8C69; padding: 14px 20px 10px; text-align: center; }
+  .header h1 { font-family: 'Fredoka One', cursive; font-size: 26px; color: white; letter-spacing: 1px; }
+  .outcome-bar { background: #fff3e0; border-bottom: 2px dashed #FFB347; padding: 6px 16px; font-size: 13px; color: #b06000; text-align: center; font-weight: 700; }
+  .progress-bar-wrap { background: #ffe0c3; height: 8px; }
+  .progress-bar-fill { background: #FF8C69; height: 8px; transition: width 0.5s ease; border-radius: 0 4px 4px 0; }
+  .task-meta { display: flex; justify-content: space-between; align-items: center; padding: 8px 16px 4px; font-size: 12px; color: #b06000; font-weight: 700; }
+  .task-label { background: #FF8C69; color: white; border-radius: 20px; padding: 3px 12px; font-size: 12px; font-family: 'Fredoka One', cursive; }
+  .screen { display: none; }
+  .screen.active { display: block; }
+  .content-area { padding: 12px 16px 16px; }
+  .task-instruction { background: white; border-radius: 14px; padding: 10px 14px; margin-bottom: 14px; border-left: 4px solid #FF8C69; font-size: 14px; font-weight: 700; color: #3a2f2f; line-height: 1.5; }
+  .task-instruction small { color: #999; font-weight: 600; }
+  .face-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
+  .face-card { background: white; border-radius: 14px; padding: 10px 6px 8px; text-align: center; border: 2.5px solid #ffe0c3; cursor: pointer; transition: all 0.2s; }
+  .face-card:hover { border-color: #FF8C69; transform: translateY(-2px); }
+  .face-card.selected { border-color: #FF8C69; background: #fff3e0; }
+  .face-card.correct { border-color: #4CAF50; background: #e8f5e9; }
+  .face-card.wrong { border-color: #f44336; background: #ffebee; animation: shake 0.3s; }
+  .face-emoji { font-size: 30px; display: block; margin-bottom: 4px; }
+  .face-label { font-size: 11px; color: #aaa; font-weight: 700; }
+  .face-label.revealed { color: #2e7d32; }
+  .word-options { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .word-chip { background: #FF8C69; color: white; border-radius: 20px; padding: 7px 16px; font-size: 14px; font-weight: 700; cursor: pointer; border: none; font-family: 'Nunito', sans-serif; transition: all 0.2s; }
+  .word-chip:hover { background: #e8714f; transform: scale(1.05); }
+  .word-chip.used { background: #ccc; cursor: default; pointer-events: none; }
+  .sentence-box { background: white; border-radius: 14px; padding: 14px; margin-bottom: 10px; border: 2px solid #ffe0c3; font-size: 16px; font-weight: 700; line-height: 2; text-align: center; }
+  .blank { display: inline-block; min-width: 80px; border-bottom: 3px solid #FF8C69; padding: 0 4px; font-weight: 800; color: #FF8C69; text-align: center; vertical-align: bottom; }
+  .options-row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 10px 0; }
+  .opt-btn { background: white; border: 2.5px solid #FF8C69; color: #FF8C69; border-radius: 20px; padding: 7px 18px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: 'Nunito', sans-serif; transition: all 0.2s; }
+  .opt-btn:hover { background: #FF8C69; color: white; }
+  .opt-btn.correct-choice { background: #4CAF50; border-color: #4CAF50; color: white; }
+  .opt-btn.wrong-choice { background: #f44336; border-color: #f44336; color: white; }
+  .opt-btn:disabled { cursor: default; }
+  .sentence-counter { font-size: 13px; color: #b06000; font-weight: 700; text-align: center; margin-bottom: 8px; }
+  .tof-card { background: white; border-radius: 16px; padding: 16px; text-align: center; border: 2px solid #ffe0c3; margin-bottom: 12px; font-size: 16px; font-weight: 700; line-height: 1.6; }
+  .tof-buttons { display: flex; gap: 10px; justify-content: center; }
+  .tof-btn { flex: 1; max-width: 130px; padding: 11px; border-radius: 12px; border: none; font-size: 16px; font-weight: 800; cursor: pointer; font-family: 'Fredoka One', cursive; letter-spacing: 0.5px; transition: all 0.2s; }
+  .tof-true { background: #4CAF50; color: white; }
+  .tof-false { background: #f44336; color: white; }
+  .tof-btn:hover { transform: scale(1.05); }
+  .tof-btn:disabled { opacity: 0.5; cursor: default; transform: none; }
+  .tof-feedback { margin-top: 10px; font-size: 14px; font-weight: 700; padding: 8px; border-radius: 10px; }
+  .tof-feedback.good { background: #e8f5e9; color: #2e7d32; }
+  .tof-feedback.bad { background: #ffebee; color: #c62828; }
+  .collocation-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+  .collocation-col { background: white; border-radius: 14px; padding: 10px; border: 2px solid #ffe0c3; min-height: 110px; }
+  .col-title { font-family: 'Fredoka One', cursive; font-size: 15px; margin-bottom: 8px; text-align: center; padding: 5px; border-radius: 8px; color: white; }
+  .drop-zone { min-height: 60px; border: 2px dashed #ffe0c3; border-radius: 10px; padding: 6px; display: flex; flex-wrap: wrap; gap: 4px; align-content: flex-start; }
+  .sort-chip { border-radius: 12px; padding: 5px 11px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; user-select: none; border: none; font-family: 'Nunito', sans-serif; color: white; background: #FFB347; }
+  .sort-chip:hover { transform: scale(1.05); }
+  .sort-chip.correct-sort { background: #4CAF50; cursor: default; }
+  .sort-bank { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; padding: 10px; background: #fff3e0; border-radius: 12px; margin-bottom: 10px; }
+  .scenario-card { background: white; border-radius: 14px; padding: 14px; margin-bottom: 12px; border-left: 4px solid #FFB347; font-size: 14px; font-weight: 700; text-align: center; }
+  .scenario-emoji { font-size: 40px; display: block; margin-bottom: 6px; }
+  .writing-area { width: 100%; min-height: 90px; border: 2px solid #ffe0c3; border-radius: 12px; padding: 10px; font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 600; resize: none; color: #3a2f2f; background: white; outline: none; transition: border-color 0.2s; }
+  .writing-area:focus { border-color: #FF8C69; }
+  .word-bank-label { font-size: 12px; font-weight: 700; color: #b06000; margin: 8px 0 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .hint-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .hint-chip { background: #FFF3CD; border: 1.5px solid #FFB347; color: #b06000; border-radius: 12px; padding: 4px 11px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; font-family: 'Nunito', sans-serif; }
+  .hint-chip:hover { background: #FFB347; color: white; }
+  .nav-row { display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; }
+  .nav-btn { background: #FF8C69; color: white; border: none; border-radius: 20px; padding: 10px 22px; font-size: 14px; font-weight: 800; font-family: 'Fredoka One', cursive; cursor: pointer; letter-spacing: 0.5px; transition: all 0.2s; }
+  .nav-btn:hover { background: #e8714f; transform: scale(1.03); }
+  .nav-btn:disabled { background: #ccc; cursor: default; transform: none; }
+  .nav-btn.secondary { background: #FFB347; }
+  .nav-btn.secondary:hover { background: #e8a030; }
+  .feedback-msg { text-align: center; font-size: 14px; font-weight: 700; padding: 8px; border-radius: 10px; margin: 8px 0; min-height: 30px; }
+  .feedback-msg.good { background: #e8f5e9; color: #2e7d32; }
+  .feedback-msg.bad { background: #ffebee; color: #c62828; }
+  .feedback-msg.neutral { color: #b06000; background: #fff3e0; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+  @keyframes pop { 0%{transform:scale(0.8);opacity:0} 80%{transform:scale(1.1)} 100%{transform:scale(1);opacity:1} }
+  .congrats { animation: pop 0.5s ease forwards; }
+  .completion-screen { text-align: center; padding: 20px 16px; }
+  .big-emoji { font-size: 60px; display: block; margin: 10px auto; }
+  .completion-title { font-family: 'Fredoka One', cursive; font-size: 28px; color: #FF8C69; margin-bottom: 10px; }
+  .score-display { font-size: 40px; font-weight: 800; color: #FF8C69; margin: 10px 0; }
+  .score-label { font-size: 14px; color: #888; margin-bottom: 16px; }
+  .star-row { display: flex; justify-content: center; gap: 8px; margin: 12px 0; }
+  .star { font-size: 32px; }
+  .review-list { background: white; border-radius: 14px; padding: 14px; margin-top: 14px; text-align: left; border: 2px solid #ffe0c3; }
+  .review-title { font-family: 'Fredoka One', cursive; font-size: 16px; color: #FF8C69; margin-bottom: 10px; }
+  .review-item { font-size: 13px; font-weight: 600; padding: 5px 0; border-bottom: 1px dashed #ffe0c3; color: #5a4f4f; }
+  .review-item:last-child { border-bottom: none; }
+  .restart-btn { background: #FF8C69; color: white; border: none; border-radius: 24px; padding: 12px 30px; font-size: 16px; font-weight: 800; font-family: 'Fredoka One', cursive; cursor: pointer; margin-top: 16px; letter-spacing: 1px; transition: all 0.2s; }
+  .restart-btn:hover { background: #e8714f; transform: scale(1.05); }
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="header"><h1>😊 How Are You Feeling? 😟</h1></div>
+  <div class="outcome-bar">🎯 I can name feelings and use feelings words in sentences</div>
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill" style="width:0%"></div></div>
+  <div class="task-meta">
+    <span id="task-label-text" class="task-label">Task 1 of 5</span>
+    <span id="score-display">⭐ 0 points</span>
+  </div>
+
+  <!-- TASK 1 -->
+  <div id="screen-1" class="screen active">
+    <div class="content-area">
+      <div class="task-instruction">🎯 Match the word to the face!<br><small>Click a face, then click a word.</small></div>
+      <div class="face-grid" id="face-grid"></div>
+      <div class="word-options" id="word-bank-1"></div>
+      <div class="feedback-msg" id="fb1"></div>
+      <div class="nav-row"><button class="nav-btn" id="next1" onclick="goToTask(2)" disabled>Next →</button></div>
+    </div>
+  </div>
+
+  <!-- TASK 2 -->
+  <div id="screen-2" class="screen">
+    <div class="content-area">
+      <div class="task-instruction">✏️ Choose the right word to finish the sentence.</div>
+      <div class="sentence-counter" id="sent-counter">Sentence 1 of 5</div>
+      <div class="sentence-box" id="sentence-display"></div>
+      <div class="options-row" id="fill-options"></div>
+      <div class="feedback-msg" id="fb2"></div>
+      <div class="nav-row"><button class="nav-btn" id="next2" onclick="goToTask(3)" disabled>Next →</button></div>
+    </div>
+  </div>
+
+  <!-- TASK 3 -->
+  <div id="screen-3" class="screen">
+    <div class="content-area">
+      <div class="task-instruction">🤔 True or False? Read carefully!</div>
+      <div class="sentence-counter" id="tof-counter">Question 1 of 4</div>
+      <div class="tof-card" id="tof-statement"></div>
+      <div class="tof-buttons">
+        <button class="tof-btn tof-true" id="tof-t" onclick="answerTof(true)">TRUE ✓</button>
+        <button class="tof-btn tof-false" id="tof-f" onclick="answerTof(false)">FALSE ✗</button>
+      </div>
+      <div class="tof-feedback" id="tof-fb"></div>
+      <div class="nav-row" style="margin-top:12px"><button class="nav-btn" id="next3" onclick="goToTask(4)" disabled>Next →</button></div>
+    </div>
+  </div>
+
+  <!-- TASK 4 -->
+  <div id="screen-4" class="screen">
+    <div class="content-area">
+      <div class="task-instruction">🗂️ Sort the phrases! Are they about feeling good or feeling bad?<br><small>Click a phrase to sort it.</small></div>
+      <div class="collocation-grid">
+        <div class="collocation-col">
+          <div class="col-title" style="background:#4CAF50;">😊 Good feeling</div>
+          <div class="drop-zone" id="zone-good"></div>
+        </div>
+        <div class="collocation-col">
+          <div class="col-title" style="background:#5C9BD6;">😢 Bad feeling</div>
+          <div class="drop-zone" id="zone-bad"></div>
+        </div>
+      </div>
+      <div class="sort-bank" id="sort-bank"></div>
+      <div class="feedback-msg" id="fb4"></div>
+      <div class="nav-row"><button class="nav-btn" id="next4" onclick="goToTask(5)" disabled>Next →</button></div>
+    </div>
+  </div>
+
+  <!-- TASK 5 -->
+  <div id="screen-5" class="screen">
+    <div class="content-area">
+      <div class="task-instruction">🖊️ Look at the picture. Write 2 sentences.<br><small>How does this person feel? Why?</small></div>
+      <div class="scenario-card" id="scenario-display"></div>
+      <div class="word-bank-label">💡 Click a word to add it</div>
+      <div class="hint-chips" id="hint-chips"></div>
+      <textarea class="writing-area" id="student-writing" placeholder="Write here... e.g. She feels happy because..."></textarea>
+      <div class="feedback-msg" id="fb5"></div>
+      <div class="nav-row">
+        <button class="nav-btn secondary" onclick="checkWriting()">Check ✓</button>
+        <button class="nav-btn" id="next5" onclick="finish()" disabled>Finish 🎉</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DONE -->
+  <div id="screen-done" class="screen">
+    <div class="completion-screen">
+      <span class="big-emoji congrats" id="done-emoji">🌟</span>
+      <div class="completion-title">Well done!</div>
+      <div class="score-display" id="final-score">0</div>
+      <div class="score-label">points earned</div>
+      <div class="star-row" id="star-row"></div>
+      <div class="review-list">
+        <div class="review-title">📚 Words you practised today</div>
+        <div class="review-item">😊 happy, excited, proud, surprised</div>
+        <div class="review-item">😢 sad, angry, worried, scared, bored</div>
+        <div class="review-item">🔗 feel happy, feel sad, feel angry, feel scared</div>
+        <div class="review-item">💬 I feel... because... / She feels... when...</div>
+      </div>
+      <button class="restart-btn" onclick="restartApp()">🔄 Try Again</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let totalScore = 0;
+let selectedFace = null;
+let matchedCount = 0;
+
+const faces = [
+  { emoji: '😊', word: 'happy',     id: 'f1' },
+  { emoji: '😢', word: 'sad',       id: 'f2' },
+  { emoji: '😡', word: 'angry',     id: 'f3' },
+  { emoji: '😨', word: 'scared',    id: 'f4' },
+  { emoji: '🤩', word: 'excited',   id: 'f5' },
+  { emoji: '😴', word: 'bored',     id: 'f6' },
+  { emoji: '😟', word: 'worried',   id: 'f7' },
+  { emoji: '😮', word: 'surprised', id: 'f8' },
+];
+
+function updateMeta() {
+  document.getElementById('score-display').textContent = '⭐ ' + totalScore + ' points';
+}
+
+function updateProgress(task) {
+  document.getElementById('progress-fill').style.width = (((task-1)/5)*100) + '%';
+  document.getElementById('task-label-text').textContent = task <= 5 ? 'Task ' + task + ' of 5' : 'Complete!';
+  updateMeta();
+}
+
+function goToTask(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  updateProgress(n);
+  if (n===2) initTask2();
+  if (n===3) initTask3();
+  if (n===4) initTask4();
+  if (n===5) initTask5();
+}
+
+function showFb(id, msg, type) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.className = 'feedback-msg ' + type;
+}
+
+/* TASK 1 */
+function initTask1() {
+  const grid = document.getElementById('face-grid');
+  grid.innerHTML = '';
+  faces.forEach(f => {
+    const c = document.createElement('div');
+    c.className = 'face-card';
+    c.id = 'face-' + f.id;
+    c.innerHTML = '<span class="face-emoji">' + f.emoji + '</span><span class="face-label" id="lbl-' + f.id + '">?</span>';
+    c.onclick = () => selectFace(f);
+    grid.appendChild(c);
+  });
+  const bank = document.getElementById('word-bank-1');
+  bank.innerHTML = '';
+  [...faces].sort(() => Math.random()-0.5).forEach(f => {
+    const chip = document.createElement('button');
+    chip.className = 'word-chip';
+    chip.textContent = f.word;
+    chip.id = 'chip-' + f.word;
+    chip.onclick = () => selectWord(f.word);
+    bank.appendChild(chip);
+  });
+}
+
+function selectFace(f) {
+  const card = document.getElementById('face-' + f.id);
+  if (card.classList.contains('correct')) return;
+  document.querySelectorAll('.face-card').forEach(c => { if (!c.classList.contains('correct')) c.classList.remove('selected'); });
+  card.classList.add('selected');
+  selectedFace = f;
+  document.getElementById('fb1').className = 'feedback-msg';
+  document.getElementById('fb1').textContent = '';
+}
+
+function selectWord(w) {
+  if (!selectedFace) { showFb('fb1','Click a face first!','neutral'); return; }
+  const faceCard = document.getElementById('face-' + selectedFace.id);
+  if (faceCard.classList.contains('correct')) { selectedFace = null; return; }
+  if (w === selectedFace.word) {
+    faceCard.classList.remove('selected');
+    faceCard.classList.add('correct');
+    document.getElementById('lbl-' + selectedFace.id).textContent = w;
+    document.getElementById('lbl-' + selectedFace.id).classList.add('revealed');
+    document.getElementById('chip-' + w).classList.add('used');
+    matchedCount++;
+    totalScore += 5;
+    updateMeta();
+    showFb('fb1','✅ Yes! ' + selectedFace.emoji + ' = ' + w + '!', 'good');
+    selectedFace = null;
+    if (matchedCount === 8) { document.getElementById('next1').disabled = false; showFb('fb1','🎉 Great job! You matched all 8!','good'); }
+  } else {
+    faceCard.classList.add('wrong');
+    setTimeout(() => faceCard.classList.remove('wrong'), 500);
+    showFb('fb1','❌ Try again! Look at the face carefully.','bad');
+  }
+}
+
+/* TASK 2 */
+const sentences = [
+  { text: 'I feel ____ because it is my birthday today!', answer: 'happy', options: ['happy', 'bored', 'tired'] },
+  { text: 'She feels ____ because she lost her toy.', answer: 'sad', options: ['sad', 'excited', 'proud'] },
+  { text: 'He feels ____ because there is a big dog near him.', answer: 'scared', options: ['scared', 'angry', 'happy'] },
+  { text: 'Tom feels ____ because he has nothing to do.', answer: 'bored', options: ['bored', 'worried', 'excited'] },
+  { text: 'She feels ____ because she got a gold star!', answer: 'proud', options: ['proud', 'sad', 'scared'] },
+];
+
+let sentIdx = 0;
+let sentCorrect = 0;
+
+function initTask2() { sentIdx = 0; sentCorrect = 0; renderSentence(); }
+
+function renderSentence() {
+  const s = sentences[sentIdx];
+  document.getElementById('sent-counter').textContent = 'Sentence ' + (sentIdx+1) + ' of ' + sentences.length;
+  document.getElementById('sentence-display').innerHTML = s.text.replace('____', '<span class="blank" id="blank-slot">____</span>');
+  document.getElementById('fb2').textContent = '';
+  document.getElementById('fb2').className = 'feedback-msg';
+  const opts = document.getElementById('fill-options');
+  opts.innerHTML = '';
+  [...s.options].sort(() => Math.random()-0.5).forEach(o => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.textContent = o;
+    btn.onclick = () => chooseOpt(o, btn, s);
+    opts.appendChild(btn);
+  });
+}
+
+function chooseOpt(val, btn, s) {
+  document.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+  if (val === s.answer) {
+    btn.classList.add('correct-choice');
+    document.getElementById('blank-slot').textContent = val;
+    document.getElementById('blank-slot').style.color = '#4CAF50';
+    sentCorrect++;
+    totalScore += 8;
+    updateMeta();
+    showFb('fb2','✅ Correct! "' + val + '" is the right word!','good');
+  } else {
+    btn.classList.add('wrong-choice');
+    document.querySelectorAll('.opt-btn').forEach(b => { if (b.textContent === s.answer) b.classList.add('correct-choice'); });
+    document.getElementById('blank-slot').textContent = s.answer;
+    showFb('fb2','❌ The answer is "' + s.answer + '". Try to remember it!','bad');
+  }
+  setTimeout(() => {
+    sentIdx++;
+    if (sentIdx < sentences.length) { renderSentence(); }
+    else { document.getElementById('next2').disabled = false; showFb('fb2','🎉 All done! You got ' + sentCorrect + ' out of 5!','good'); }
+  }, 1500);
+}
+
+/* TASK 3 */
+const tofQs = [
+  { stmt: '"Happy" and "sad" mean the same thing.', answer: false, explanation: 'No! Happy means you feel good. Sad means you feel bad.' },
+  { stmt: 'You can say "I feel scared" when something frightens you.', answer: true, explanation: 'Yes! Scared and frightened mean the same thing.' },
+  { stmt: 'If you feel excited, you feel worried and unhappy.', answer: false, explanation: 'No! Excited means you feel very happy about something good.' },
+  { stmt: 'You feel proud when you do something well, like winning a race.', answer: true, explanation: 'Yes! You feel proud when you do a good job.' },
+];
+
+let tofIdx = 0;
+
+function initTask3() { tofIdx = 0; renderTof(); }
+
+function renderTof() {
+  const q = tofQs[tofIdx];
+  document.getElementById('tof-counter').textContent = 'Question ' + (tofIdx+1) + ' of ' + tofQs.length;
+  document.getElementById('tof-statement').textContent = q.stmt;
+  document.getElementById('tof-fb').textContent = '';
+  document.getElementById('tof-fb').className = 'tof-feedback';
+  document.getElementById('tof-t').disabled = false;
+  document.getElementById('tof-f').disabled = false;
+}
+
+function answerTof(val) {
+  const q = tofQs[tofIdx];
+  document.getElementById('tof-t').disabled = true;
+  document.getElementById('tof-f').disabled = true;
+  const fb = document.getElementById('tof-fb');
+  if (val === q.answer) {
+    fb.textContent = '✅ ' + q.explanation;
+    fb.className = 'tof-feedback good';
+    totalScore += 8;
+    updateMeta();
+  } else {
+    fb.textContent = '❌ ' + q.explanation;
+    fb.className = 'tof-feedback bad';
+  }
+  setTimeout(() => {
+    tofIdx++;
+    if (tofIdx < tofQs.length) { renderTof(); }
+    else { document.getElementById('next3').disabled = false; fb.textContent += ' 🎉 All done!'; }
+  }, 1900);
+}
+
+/* TASK 4 */
+const collocations = [
+  { phrase: 'feel happy',   cat: 'good' },
+  { phrase: 'feel excited', cat: 'good' },
+  { phrase: 'feel proud',   cat: 'good' },
+  { phrase: 'feel great',   cat: 'good' },
+  { phrase: 'feel sad',     cat: 'bad' },
+  { phrase: 'feel angry',   cat: 'bad' },
+  { phrase: 'feel scared',  cat: 'bad' },
+  { phrase: 'feel worried', cat: 'bad' },
+];
+
+let sortedCount = 0;
+
+function initTask4() {
+  sortedCount = 0;
+  document.getElementById('zone-good').innerHTML = '';
+  document.getElementById('zone-bad').innerHTML = '';
+  const bank = document.getElementById('sort-bank');
+  bank.innerHTML = '';
+  [...collocations].sort(() => Math.random()-0.5).forEach((c, i) => {
+    const chip = document.createElement('button');
+    chip.className = 'sort-chip';
+    chip.textContent = c.phrase;
+    chip.id = 'sort-' + i;
+    chip.onclick = () => sortChip(chip, c);
+    bank.appendChild(chip);
+  });
+  document.getElementById('fb4').textContent = '';
+  document.getElementById('fb4').className = 'feedback-msg';
+}
+
+function sortChip(chip, c) {
+  const zone = document.getElementById(c.cat === 'good' ? 'zone-good' : 'zone-bad');
+  chip.classList.add('correct-sort');
+  chip.onclick = null;
+  zone.appendChild(chip);
+  totalScore += 5;
+  sortedCount++;
+  updateMeta();
+  if (sortedCount === collocations.length) {
+    document.getElementById('next4').disabled = false;
+    showFb('fb4','🎉 Brilliant! You sorted all the phrases!','good');
+  }
+}
+
+/* TASK 5 */
+const scenarios = [
+  { emoji: '🏅', desc: 'A girl wins first place in the school race. Her mum and dad are clapping.', hints: ['proud','excited','happy','She feels...','because...','very','she won'] },
+  { emoji: '🐶', desc: 'A boy cannot find his dog. He is looking everywhere.', hints: ['worried','sad','scared','He feels...','because...','very','his dog'] },
+  { emoji: '🎂', desc: "It is a girl's birthday. All her friends are at her party.", hints: ['happy','excited','surprised','She feels...','because...','very','her birthday'] },
+];
+
+function initTask5() {
+  const sc = scenarios[Math.floor(Math.random() * scenarios.length)];
+  document.getElementById('scenario-display').innerHTML = '<span class="scenario-emoji">' + sc.emoji + '</span>' + sc.desc;
+  document.getElementById('student-writing').value = '';
+  document.getElementById('fb5').textContent = '';
+  document.getElementById('fb5').className = 'feedback-msg';
+  document.getElementById('next5').disabled = true;
+  const hints = document.getElementById('hint-chips');
+  hints.innerHTML = '';
+  sc.hints.forEach(h => {
+    const chip = document.createElement('button');
+    chip.className = 'hint-chip';
+    chip.textContent = h;
+    chip.onclick = () => {
+      const ta = document.getElementById('student-writing');
+      const v = ta.value;
+      ta.value = v + (v.length > 0 && !v.endsWith(' ') ? ' ' : '') + h + ' ';
+      ta.focus();
+    };
+    hints.appendChild(chip);
+  });
+}
+
+function checkWriting() {
+  const text = document.getElementById('student-writing').value.trim();
+  if (text.length < 10) { showFb('fb5','✏️ Write more! Try 2 sentences.','neutral'); return; }
+  const feelWords = ['feel','feels','happy','sad','excited','worried','scared','proud','angry','bored','surprised','because','when'];
+  const found = feelWords.filter(w => text.toLowerCase().includes(w));
+  if (found.length >= 2) {
+    totalScore += 15;
+    updateMeta();
+    showFb('fb5','🌟 Great writing! You used feelings words: ' + found.slice(0,3).join(', ') + '!','good');
+    document.getElementById('next5').disabled = false;
+  } else {
+    showFb('fb5','💡 Try to use a feelings word and the word "because". Click the word bank above!','neutral');
+  }
+}
+
+function finish() {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-done').classList.add('active');
+  document.getElementById('progress-fill').style.width = '100%';
+  document.getElementById('task-label-text').textContent = 'Complete! 🎉';
+  document.getElementById('final-score').textContent = totalScore;
+  updateMeta();
+  const stars = totalScore >= 140 ? 3 : totalScore >= 90 ? 2 : 1;
+  const row = document.getElementById('star-row');
+  row.innerHTML = '';
+  for (let i = 0; i < 3; i++) { const s = document.createElement('span'); s.className='star'; s.textContent = i < stars ? '⭐' : '☆'; row.appendChild(s); }
+  document.getElementById('done-emoji').textContent = stars === 3 ? '🏆' : stars === 2 ? '🌟' : '👍';
+}
+
+function restartApp() {
+  totalScore = 0; matchedCount = 0; selectedFace = null;
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-1').classList.add('active');
+  ['next1','next2','next3','next4','next5'].forEach(id => document.getElementById(id).disabled = true);
+  updateProgress(1);
+  initTask1();
+}
+
+initTask1();
+updateProgress(1);
+</script>
+</body>
+</html>
